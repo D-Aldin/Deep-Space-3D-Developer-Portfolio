@@ -1,4 +1,60 @@
+@font-face {
+  font-family: "zalando";
+  src: url("../public/fonts/ZalandoSansExpanded-VariableFont_wght.ttf");
+}
+
+html,
 body {
-  overflow: hidden;
-  margin: 0px;
+  margin: 0;
+  background: #000;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+}
+
+.hero {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+  pointer-events: none; /* don't block the mouse effect */
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 1.5s ease,
+    transform 1.5s ease;
+}
+
+.hero.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-family: "zalando";
+
+  background: -webkit-linear-gradient(#eee, #333333b7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  margin: 0;
+  opacity: 0.7;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
 }
