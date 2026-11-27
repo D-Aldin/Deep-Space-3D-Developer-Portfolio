@@ -28,16 +28,38 @@ camera.position.set(0, CONFIG.camStartY, CONFIG.camStartZ + CONFIG.introDolly);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x666677, 2));
 
 const clock = new THREE.Clock();
 const loader = new GLTFLoader();
-let galaxy: THREE.Group | null = null;
+let galaxy: THREE.Object3D | null = null;
+
+function createStarTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d")!;
+  const glow = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  glow.addColorStop(0.0, "rgba(255, 255, 255, 1)");
+  glow.addColorStop(0.18, "rgba(255, 255, 255, 1)");
+  glow.addColorStop(0.4, "rgba(255, 255, 255, 0.45)");
+  glow.addColorStop(0.7, "rgba(255, 255, 255, 0.10)");
+  glow.addColorStop(1.0, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, 64, 64);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
 
 async function loadGalaxy() {
   try {
     const loadedModel = await loader.loadAsync("/models/milky.glb");
-    galaxy = loadedModel.scene;
-    scene.add(galaxy);
+    const model = loadedModel.scene;
+    model.updateMatrixWorld(true);
+    const starTexture = createStarTexture();
+    scene.add(model);
+    // scene.add(starTexture);
   } catch (error) {
     console.error("Error loading galaxy model:", error);
   }
