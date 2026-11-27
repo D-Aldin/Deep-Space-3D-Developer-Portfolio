@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import "./style.css";
 
 const CONFIG = {
   // Camera position
@@ -27,17 +29,28 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const clock = new THREE.Clock();
+const loader = new GLTFLoader();
+let galaxy: THREE.Group | null = null;
 
-camera.position.z = 2;
+async function loadGalaxy() {
+  try {
+    const loadedModel = await loader.loadAsync("/models/milky.glb");
+    galaxy = loadedModel.scene;
+    scene.add(galaxy);
+  } catch (error) {
+    console.error("Error loading galaxy model:", error);
+  }
+}
 
 function animate() {
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  requestAnimationFrame(animate);
+  if (galaxy) {
+    galaxy.rotation.y += 0.001;
+    galaxy.position.z = 2;
+  }
   renderer.render(scene, camera);
 }
 
-renderer.setAnimationLoop(animate);
+loadGalaxy();
+animate();
